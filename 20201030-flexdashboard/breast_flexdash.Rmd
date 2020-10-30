@@ -1,0 +1,133 @@
+---
+title: "Breast Cancer"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: simplex
+    orientation: rows
+    vertical_layout: fill
+    
+---
+
+````{r setup, include=FALSE}
+library(flexdashboard)
+library("corrplot")
+library("readr")
+library("dplyr")
+library("ggplot2")
+library("MASS")
+#setwd("~/Desktop")
+data <- read.csv("~Desktop/flexdash/data.csv")
+data$diagnosis <- as.factor(data$diagnosis)
+# the 33 column is not right
+data[,33] <- NULL
+```
+
+PCA Page
+=======================================================================
+
+Row 
+-----------------------------------------------------------------------
+
+### Propotion Begnine vs Maline
+
+```{r}
+knitr::kable(prop.table(table(data$diagnosis)))
+```
+
+### Correlation Plot
+
+```{r}
+corr_mat <- cor(data[,3:ncol(data)])
+corrplot(corr_mat, order = "hclust", tl.cex = 1, addrect = 8)
+```
+
+
+Row {.tabset}
+-----------------------------------------------------------------------
+
+
+
+### PCA-1
+
+```{r}
+pca_res <- prcomp(data[,3:ncol(data)], center = TRUE, scale = TRUE)
+pca_df <- as.data.frame(pca_res$x)
+ggplot(pca_df, aes(x=PC1, y=PC2, col=data$diagnosis)) + geom_point(alpha=0.5)
+```
+
+### PC1-density
+```{r}
+#g_pc1 <- 
+ggplot(pca_df, aes(x=PC1, fill=data$diagnosis)) + geom_density(alpha=0.25)  
+#g_pc2 <- ggplot(pca_df, aes(x=PC2, fill=data$diagnosis)) + geom_density(alpha=0.25)  
+#grid.arrange(g_pc1, g_pc2, ncol=2)
+```
+
+### PC2-density
+```{r}
+#g_pc1 <- ggplot(pca_df, aes(x=PC1, fill=data$diagnosis)) + geom_density(alpha=0.25)  
+#g_pc2 <- 
+ggplot(pca_df, aes(x=PC2, fill=data$diagnosis)) + geom_density(alpha=0.25)  
+#grid.arrange(g_pc1, g_pc2, ncol=2)
+```
+
+
+LDA Plot {data-navmenu=LDA}
+=========================================================================
+
+Row {data-width=350}
+-----------------------------------------------------------------------
+
+### Propotion Begnine vs Maline
+
+```{r}
+knitr::kable(prop.table(table(data$diagnosis)))
+```
+
+### Correlation Plot
+
+```{r}
+corr_mat <- cor(data[,3:ncol(data)])
+corrplot(corr_mat, order = "hclust", tl.cex = 1, addrect = 8)
+```
+
+Row {data-width= 650}
+-------------------------------------------------------------------------
+
+### LDA Plot
+```{r}
+lda_res <- lda(diagnosis~., data, center = TRUE, scale = TRUE) 
+lda_df <- predict(lda_res, data)$x %>% as.data.frame() %>% cbind(diagnosis=data$diagnosis)
+
+ggplot(lda_df, aes(x=LD1, y=0, col=diagnosis)) + geom_point(alpha=0.5)
+```
+
+LDA Density {data-navmenu=LDA}
+=========================================================================
+
+Row {data-width=350}
+-----------------------------------------------------------------------
+
+### Propotion Begnine vs Maline
+
+```{r}
+knitr::kable(prop.table(table(data$diagnosis)))
+```
+
+### Correlation Plot
+
+```{r}
+corr_mat <- cor(data[,3:ncol(data)])
+corrplot(corr_mat, order = "hclust", tl.cex = 1, addrect = 8)
+```
+
+Row {data-width= 650}
+-------------------------------------------------------------------------
+
+### LDA Density
+```{r}
+lda_res <- lda(diagnosis~., data, center = TRUE, scale = TRUE) 
+lda_df <- predict(lda_res, data)$x %>% as.data.frame() %>% cbind(diagnosis=data$diagnosis)
+
+ggplot(lda_df, aes(x=LD1, fill=diagnosis)) + geom_density(alpha=0.5)
+```
