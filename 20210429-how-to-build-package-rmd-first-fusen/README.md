@@ -2,7 +2,7 @@
 
 Speaker: [Sébastien Rochette](https://statnmap.co)
 
-- Video: soon ...
+- Video: https://youtu.be/febuOcS70t4
 
 - Slides: https://github.com/statnmap/prez/blob/master/2021-04-how-to-build-package-rmd-first-fusen.pdf
 
